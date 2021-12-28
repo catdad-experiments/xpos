@@ -1,5 +1,5 @@
 # xpos
 
 ```bash
-npx https://github.com/catdad-experiments/xpos/tarball/master
+npx https://github.com/catdad-experiments/xpos/tarball/main
 ```
