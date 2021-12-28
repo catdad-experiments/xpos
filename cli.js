@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const http = require('http');
 const handler = require('serve-handler');
 const localtunnel = require('localtunnel');
