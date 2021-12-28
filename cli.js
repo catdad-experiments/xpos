@@ -27,8 +27,8 @@ const clipboardy = require('clipboardy');
   console.log(`externally running at: ${tunnel.url}`);
 
   await clipboardy.write(tunnel.url)
-    .then(() => void console.log('url has been copied to clipboard'))
-    .catch(() => void console.error('failed to copy url to clipboard'));
+    .then(() => void console.log('  (url has been copied to clipboard)'))
+    .catch(() => void console.error('  (failed to copy url to clipboard)'));
 
   tunnel.on('close', () => {
     // tunnels are closed
