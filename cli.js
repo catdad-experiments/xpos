@@ -4,6 +4,7 @@ const http = require('http');
 const handler = require('serve-handler');
 const localtunnel = require('localtunnel');
 const getPort = require('get-port');
+const clipboardy = require('clipboardy');
 
 (async () => {
   const port = await getPort();
@@ -24,6 +25,10 @@ const getPort = require('get-port');
   // the assigned public url for your tunnel
   // i.e. https://abcdefgjhij.localtunnel.me
   console.log(`externally running at: ${tunnel.url}`);
+
+  await clipboardy.write(tunnel.url)
+    .then(() => void console.log('url has been copied to clipboard'))
+    .catch(() => void console.error('failed to copy url to clipboard'));
 
   tunnel.on('close', () => {
     // tunnels are closed
