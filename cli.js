@@ -10,15 +10,13 @@ const clipboardy = require('clipboardy');
   const port = await getPort();
 
   const server = http.createServer((request, response) => {
-    // You pass two more arguments for config and middleware
-    // More details here: https://github.com/vercel/serve-handler#options
+    // see for options: https://github.com/vercel/serve-handler#options
     return handler(request, response);
   });
 
-  await new Promise(r => server.listen(port, () => {
-    console.log(`internally running at: http://localhost:${port}`);
-    r();
-  }));
+  await new Promise(r => server.listen(port, () => r()));
+
+  console.log(`internally running at: http://localhost:${port}`);
 
   const tunnel = await localtunnel({ port });
 
