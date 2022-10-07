@@ -6,12 +6,26 @@ const localtunnel = require('localtunnel');
 const getPort = require('get-port');
 const clipboardy = require('clipboardy');
 
+const noCache = process.argv.includes('--no-cache');
+
+const noCacheSettings = {
+  headers: [{
+    source: '**/*',
+    headers: [{
+      key: 'Cache-Control',
+      value: 'no-cache'
+    }]
+  }]
+};
+
 (async () => {
   const port = await getPort();
 
   const server = http.createServer((request, response) => {
     // see for options: https://github.com/vercel/serve-handler#options
-    return handler(request, response);
+    return handler(request, response, {
+      ...(noCache ? noCacheSettings : {})
+    });
   });
 
   await new Promise(r => server.listen(port, () => r()));
