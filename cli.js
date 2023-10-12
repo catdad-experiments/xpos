@@ -6,7 +6,19 @@ const localtunnel = require('localtunnel');
 const getPort = require('get-port');
 const clipboardy = require('clipboardy');
 
+const help = process.argv.includes('--help');
 const noCache = process.argv.includes('--no-cache');
+
+if (help) {
+  console.log(`
+  Expose a static server for the current directory to the public internet. Use responsibly.
+
+  Flags:
+    --no-cache   Set "Cache-Control: no-cache" header on all responses
+    --help       Print this help message
+  `);
+  process.exit(0);
+}
 
 const noCacheSettings = {
   headers: [{
