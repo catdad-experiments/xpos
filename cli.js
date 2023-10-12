@@ -9,6 +9,8 @@ const clipboardy = require('clipboardy');
 const help = process.argv.includes('--help');
 const noCache = process.argv.includes('--no-cache');
 
+const portRange = getPort.makeRange(9000, 9100);
+
 if (help) {
   console.log(`
   Expose a static server for the current directory to the public internet. Use responsibly.
@@ -31,7 +33,7 @@ const noCacheSettings = {
 };
 
 (async () => {
-  const port = await getPort();
+  const port = await getPort({ port: portRange });
 
   const server = http.createServer((request, response) => {
     // see for options: https://github.com/vercel/serve-handler#options
