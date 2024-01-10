@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const http = require('http');
+const https = require('https');
 const handler = require('serve-handler');
 const localtunnel = require('localtunnel');
 const getPort = require('get-port');
@@ -44,6 +45,8 @@ const noCacheSettings = {
 
   await new Promise(r => server.listen(port, () => r()));
 
+  const { body: password } = await request('https://loca.lt/mytunnelpassword');
+
   console.log(`internally running at: http://localhost:${port}`);
 
   const tunnel = await localtunnel({ port });
@@ -60,8 +63,39 @@ const noCacheSettings = {
   // the assigned public url for your tunnel
   // i.e. https://abcdefgjhij.localtunnel.me
   console.log(`externally running at: ${tunnel.url}`);
+  console.log(`  password: ${password}\n`);
 
   await clipboardy.write(tunnel.url)
-    .then(() => void console.log('  (url has been copied to clipboard)'))
-    .catch(() => void console.error('  (failed to copy url to clipboard)'));
-})();
+    .then(() => void console.log('(url has been copied to clipboard)'))
+    .catch(() => void console.error('(failed to copy url to clipboard)'));
+})().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
+
+// this is stupid, but bringing in a dependency is also meh
+const request = async (url, { method = 'GET', body = '', ...opts } = {}) => {
+  const requestMethod = url.indexOf('https://') === 0 ? https.request : http.request;
+
+  const response = await new Promise((resolve, reject) => {
+    const req = requestMethod(url, { ...opts, method }, (res) => resolve(res));
+
+    if (['post', 'put'].includes(method.toLowerCase())) {
+      req.write(body);
+    }
+
+    req.end();
+  });
+
+  let responseBody = '';
+
+  for await (const chunk of response) {
+    responseBody += Buffer.from(chunk).toString();
+  }
+
+  return {
+    status: response.statusCode,
+    headers: response.headers,
+    body: responseBody
+  };
+};
